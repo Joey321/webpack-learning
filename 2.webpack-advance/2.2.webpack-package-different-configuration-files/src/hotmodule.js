@@ -1,0 +1,1 @@
+export default '我是演示HMR module.hot.accept监听的脚本!!!'
