@@ -1,4 +1,4 @@
-// main.js和other.js都引入了jQuery，需要去除重复引入的代码
+// main.js和other.js都引入了jQuery，并不需要各自导入(优化：通过splitChunksPlugin抽取公共代码)
 
 // import $ from 'jQuery'
 

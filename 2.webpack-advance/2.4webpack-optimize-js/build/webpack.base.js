@@ -17,15 +17,37 @@ module.exports = {
   optimization: {
     // 分割chunks中的公共代码
     splitChunks: {
-      chunks: 'all'
+      chunks: 'all', // 可选值initial|async 默认为async，只会对异步加载的模块进行代码分割
+      minSize: 30000, // 模块最少大于30kB才进行拆分
+      maxSize: 0, // 模块大小无上限，不进一步拆分，一般设置minSize就可以
+      minChunks: 1, // 模块最少引用1次才会被拆分
+      maxAsyncRequests: 5, // 异步加载时同时发送的请求数量最大不能超过5，超过部分不拆分
+      maxInitialRequests: 3, // 页面初始化时同时发送的请求数量最大不能超过3，超过部分不拆分
+      automaticNameDelimiter: '~', // 默认的连接符
+      name: true, // 拆分的chunk名，根据模块名(entry)和CacheGroups中的key自动生成,使用连接符进行连接
+      cacheGroups: {
+        vendors: { // 自定义缓存组名
+          test: /[\\/]node_modules[\\/]/, // 模块在node_modules目录下就用以上配置拆分到该组
+          priority: -10, // 权重
+          // filename: 'vendors.js' // 指定缓存组名(不会使用自动生成的组名)
+        },
+        default: { // 默认缓存组名
+          minChunks: 2,
+          priority: -20,
+          reuseExistingChunk: true // 若主入口中引入两个模块，其中一个正好引用了后一个，就会直接复用，不会引用两次
+        },
+      }
     }
   },
   // 入口
-  // 配置多入口
   entry: {
-    main: './src/main.js',
-    other: './src/other.js'
+    main: './src/main.js'
   },
+  // 配置多入口
+  // entry: {
+  //   main: './src/main.js',
+  //   other: './src/other.js'
+  // },
   // 出口，指定绝对路径/输出文件名称
   output: {
     path: path.join(__dirname, '..', './dist'),
