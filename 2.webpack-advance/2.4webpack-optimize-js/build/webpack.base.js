@@ -79,10 +79,16 @@ module.exports = {
       // filename: 'main.css'
       // placeholder语法 name跟随打包entry名
       filename: '[name].css'
-    })
+    }),
+    // 忽略第三方模块内部依赖的其他模块
+    // 举例：这里忽略moment中的locale模块 传递参数依次为(/模块内部依赖模块路径/,/上下文即哪个模块下/)
+    new webpack.IgnorePlugin(/\.\/locale/, /moment/)
   ],
   // loader
   module: {
+    // 使webpack忽略解析的第三方模块(!!前提是已经知道这些模块内部不会再依赖其他模块)
+    noParse: /jquery/,
+    // 使用loader进行解析匹配到后缀名的文件
     rules: [
       {
         test: /\.css$/,
@@ -122,7 +128,9 @@ module.exports = {
           //   ]
           // }
         },
-        exclude: /node_modules/
+        // exclude: /node_modules/,
+        // 配置include提高构建效率 让babel只对src目录中自己写的高级语法进行转义就好(dist目录已经被处理过)
+        include: path.resolve(__dirname, '../src')
       },
       // 打包处理html中引用的图片资源(替换copy-webpack-plugin插件)
       {
